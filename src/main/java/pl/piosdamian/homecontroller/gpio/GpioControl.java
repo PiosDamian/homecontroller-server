@@ -3,6 +3,7 @@ package pl.piosdamian.homecontroller.gpio;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 
 import com.pi4j.io.gpio.GpioController;
@@ -21,6 +22,8 @@ public class GpioControl {
 	final private GpioController gpio;
 	private List<GpioPinDigitalOutput> switchers;
 	private List<GpioPinDigitalInput> watchers;
+
+	final static Logger log = Logger.getLogger(GpioControl.class);
 
 	public GpioControl() {
 		gpio = GpioFactory.getInstance();
@@ -50,7 +53,7 @@ public class GpioControl {
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
-		System.out.println(Resolver.resolve(address));
+		log.debug(Resolver.resolve(address));
 		for (GpioPinDigitalOutput pin : switchers) {
 			System.out.println(pin);
 			if (pin.getPin().equals(Resolver.resolve(address))) {
