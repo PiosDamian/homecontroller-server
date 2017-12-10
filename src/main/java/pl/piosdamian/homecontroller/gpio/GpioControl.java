@@ -50,7 +50,9 @@ public class GpioControl {
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
+		System.out.println(Resolver.resolve(address));
 		for (GpioPinDigitalOutput pin : switchers) {
+			System.out.println(pin);
 			if (pin.getPin().equals(Resolver.resolve(address))) {
 				return pin;
 			}
