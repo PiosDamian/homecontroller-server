@@ -5,7 +5,7 @@ import com.pi4j.io.gpio.RaspiPin;
 
 public class Resolver {
 
-	public Pin resolve(int name) {
+	public static Pin resolve(int name) {
 		Pin pin;
 		switch (name) {
 		case 0:

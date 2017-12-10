@@ -7,7 +7,7 @@ public class PinModel {
 	private RequestModel prop;
 
 	public PinModel(RequestModel prop) {
-		this.pin = new Resolver().resolve(prop.getAddress());
+		this.pin = Resolver.resolve(prop.getAddress());
 		this.prop = prop;
 	}
 

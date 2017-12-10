@@ -26,15 +26,10 @@ public class RESTController {
 		gpioController.addPin(pin);
 	}
 
-	@RequestMapping("/all")
-	public Pin all() {
-		return new Resolver().resolve(1);
-	}
-
 	@RequestMapping("/switch/{id}")
-	public int switchState(@PathVariable("id") Integer id) {
+	public Pin switchState(@PathVariable("id") int id) {
 		// gpioController.switchVal(id.intValue());
-		return id.intValue();
+		return Resolver.resolve(id);
 	}
 
 }
