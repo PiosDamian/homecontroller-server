@@ -36,20 +36,23 @@ public class GpioControl {
 			watchers.add(gpio.provisionDigitalInputPin(pin.getPin(),
 					pin.getProp().getName(), PinPullResistance.PULL_DOWN));
 		} else if (pin.getProp().getRole() == PinType.OUTPUT) {
-			switchers.add(gpio.provisionDigitalOutputPin(pin.getPin(),
-					pin.getProp().getName(), PinState.LOW));
+			GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(
+					pin.getPin(), pin.getProp().getName(), PinState.HIGH);
+			outputPin.setShutdownOptions(true, PinState.LOW);
+			switchers.add(outputPin);
 		}
 	}
 
 	public void switchVal(int address) {
 		GpioPinDigitalOutput pin = findOutputPin(address);
-		pin.toggle();
+		pin.setState(PinState.HIGH);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			pin.setState(PinState.LOW);
 		}
-		pin.toggle();
+		pin.setState(PinState.LOW);
+
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
