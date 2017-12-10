@@ -45,19 +45,11 @@ public class GpioControl {
 
 	public void switchVal(int address) {
 		GpioPinDigitalOutput pin = findOutputPin(address);
-		pin.setState(PinState.HIGH);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			pin.setState(PinState.LOW);
-		}
-		pin.setState(PinState.LOW);
-
+		pin.pulse(1000, true);
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
 		for (GpioPinDigitalOutput pin : switchers) {
-			System.out.println(pin);
 			if (pin.getPin().equals(Resolver.resolve(address))) {
 				return pin;
 			}
