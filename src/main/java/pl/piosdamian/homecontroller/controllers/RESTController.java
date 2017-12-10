@@ -29,7 +29,7 @@ public class RESTController {
 
 	@RequestMapping("/switch/{id}")
 	public Pin switchState(@PathParam("id") Integer id) {
-		gpioController.switchVal(id.intValue());
+		// gpioController.switchVal(id.intValue());
 		return Resolver.resolve(id.intValue());
 	}
 
