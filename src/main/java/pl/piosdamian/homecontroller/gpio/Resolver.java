@@ -105,7 +105,7 @@ public class Resolver {
 			pin = RaspiPin.GPIO_31;
 			break;
 		default:
-			pin = null;
+			pin = RaspiPin.GPIO_00;
 		}
 		return pin;
 	}
