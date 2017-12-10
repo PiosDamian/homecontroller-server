@@ -56,6 +56,14 @@ public class GpioControl {
 		return null;
 	}
 
+	public List<GpioPinDigitalOutput> getSwitchers() {
+		return switchers;
+	}
+
+	public List<GpioPinDigitalInput> getWatchers() {
+		return watchers;
+	}
+
 	// @SuppressWarnings("unused")
 	// private GpioPinDigitalInput findInputPin(int address) {
 	// for (GpioPinDigitalInput pin : watchers) {
