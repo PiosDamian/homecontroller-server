@@ -1,13 +1,13 @@
 package pl.piosdamian.homecontroller.controllers;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.Pin;
 
 import pl.piosdamian.homecontroller.enums.PinType;
 import pl.piosdamian.homecontroller.gpio.GpioControl;
@@ -33,7 +33,7 @@ public class RESTController {
 	}
 
 	@RequestMapping("/all")
-	public List<GpioPinDigitalOutput> all() {
+	public Map<Pin, String> all() {
 		return gpioController.getSwitchers();
 	}
 

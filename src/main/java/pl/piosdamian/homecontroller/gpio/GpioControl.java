@@ -1,7 +1,9 @@
 package pl.piosdamian.homecontroller.gpio;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 
@@ -56,8 +59,13 @@ public class GpioControl {
 		return null;
 	}
 
-	public List<GpioPinDigitalOutput> getSwitchers() {
-		return switchers;
+	public Map<Pin, String> getSwitchers() {
+		Map<Pin, String> switchersMap = new HashMap<>();
+		for (GpioPinDigitalOutput pin : switchers) {
+			switchersMap.put(pin.getPin(), pin.getName());
+		}
+
+		return switchersMap;
 	}
 
 	public List<GpioPinDigitalInput> getWatchers() {
