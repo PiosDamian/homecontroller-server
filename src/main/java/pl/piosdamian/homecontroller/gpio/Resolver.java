@@ -5,7 +5,7 @@ import com.pi4j.io.gpio.RaspiPin;
 
 public class Resolver {
 
-	public static Pin resolve(int name) {
+	public Pin resolve(int name) {
 		Pin pin;
 		switch (name) {
 		case 0:
@@ -105,7 +105,7 @@ public class Resolver {
 			pin = RaspiPin.GPIO_31;
 			break;
 		default:
-			pin = RaspiPin.GPIO_00;
+			pin = null;
 		}
 		return pin;
 	}

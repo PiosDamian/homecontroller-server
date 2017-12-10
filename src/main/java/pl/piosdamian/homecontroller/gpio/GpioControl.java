@@ -53,23 +53,22 @@ public class GpioControl {
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
-		log.debug(Resolver.resolve(address));
 		for (GpioPinDigitalOutput pin : switchers) {
 			System.out.println(pin);
-			if (pin.getPin().equals(Resolver.resolve(address))) {
+			if (pin.getPin().equals(new Resolver().resolve(address))) {
 				return pin;
 			}
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unused")
-	private GpioPinDigitalInput findInputPin(int address) {
-		for (GpioPinDigitalInput pin : watchers) {
-			if (pin.getPin() == Resolver.resolve(address)) {
-				return pin;
-			}
-		}
-		return null;
-	}
+	// @SuppressWarnings("unused")
+	// private GpioPinDigitalInput findInputPin(int address) {
+	// for (GpioPinDigitalInput pin : watchers) {
+	// if (pin.getPin() == Resolver.resolve(address)) {
+	// return pin;
+	// }
+	// }
+	// return null;
+	// }
 }
