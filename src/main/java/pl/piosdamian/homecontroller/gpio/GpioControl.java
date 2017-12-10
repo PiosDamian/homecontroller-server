@@ -37,15 +37,14 @@ public class GpioControl {
 					pin.getProp().getName(), PinPullResistance.PULL_DOWN));
 		} else if (pin.getProp().getRole() == PinType.OUTPUT) {
 			GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(
-					pin.getPin(), pin.getProp().getName(), PinState.HIGH);
+					pin.getPin(), pin.getProp().getName(), PinState.LOW);
 			outputPin.setShutdownOptions(true, PinState.LOW);
 			switchers.add(outputPin);
 		}
 	}
 
 	public void switchVal(int address) {
-		GpioPinDigitalOutput pin = findOutputPin(address);
-		pin.pulse(1000, true);
+		findOutputPin(address).pulse(1000, true);
 	}
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
