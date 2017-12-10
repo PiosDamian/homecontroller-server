@@ -1,6 +1,12 @@
 package pl.piosdamian.homecontroller.model;
 
 public class Room {
-	int roomNumber;
-	boolean lightTurned;
+	private PinModel pin;
+	boolean turnedOn;
+
+	@Override
+	public String toString() {
+		return "Room [name=" + pin.getProp().getName() + ", turnedOn="
+				+ turnedOn + "]";
+	}
 }

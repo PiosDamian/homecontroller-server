@@ -37,4 +37,10 @@ public class RequestModel {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "RequestModel [address=" + address + ", name=" + name + ", role="
+				+ role + "]";
+	}
+
 }
