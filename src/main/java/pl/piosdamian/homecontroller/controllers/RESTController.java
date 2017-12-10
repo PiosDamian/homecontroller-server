@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pl.piosdamian.homecontroller.gpio.GpioControl;
 
-@Controller
 @RestController
 public class RESTController {
 
@@ -40,5 +38,10 @@ public class RESTController {
 	public String switchLight(@PathParam("name") String name) {
 		return gpioController.switchLight(name) ? "Done"
 				: "redirect:/controllers";
+	}
+
+	@RequestMapping("/register")
+	public void register() {
+
 	}
 }
