@@ -5,11 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pi4j.io.gpio.Pin;
-
 import pl.piosdamian.homecontroller.enums.PinType;
 import pl.piosdamian.homecontroller.gpio.GpioControl;
-import pl.piosdamian.homecontroller.gpio.Resolver;
 import pl.piosdamian.homecontroller.model.PinModel;
 import pl.piosdamian.homecontroller.model.RequestModel;
 
@@ -27,9 +24,8 @@ public class RESTController {
 	}
 
 	@RequestMapping("/switch/{id}")
-	public Pin switchState(@PathVariable("id") int id) {
-		// gpioController.switchVal(id.intValue());
-		return Resolver.resolve(id);
+	public void switchState(@PathVariable("id") int id) {
+		gpioController.switchVal(id);
 	}
 
 }
