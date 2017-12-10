@@ -1,8 +1,7 @@
 package pl.piosdamian.homecontroller.controllers;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +32,7 @@ public class RESTController {
 	}
 
 	@RequestMapping("/switch/{id}")
-	public int switchState(@PathParam("id") Integer id) {
+	public int switchState(@PathVariable("id") Integer id) {
 		// gpioController.switchVal(id.intValue());
 		return id.intValue();
 	}
