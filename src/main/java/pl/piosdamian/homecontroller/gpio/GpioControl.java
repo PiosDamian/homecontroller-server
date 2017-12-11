@@ -34,12 +34,12 @@ public class GpioControl {
 	}
 
 	public void addPin(PinModel pin) {
-		if (pin.getProp().getRole() == PinType.INPUT) {
+		if (pin.getRole() == PinType.INPUT) {
 			watchers.add(gpio.provisionDigitalInputPin(pin.getPin(),
-					pin.getProp().getName(), PinPullResistance.PULL_DOWN));
-		} else if (pin.getProp().getRole() == PinType.OUTPUT) {
+					pin.getName(), PinPullResistance.PULL_DOWN));
+		} else if (pin.getRole() == PinType.OUTPUT) {
 			GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(
-					pin.getPin(), pin.getProp().getName(), PinState.LOW);
+					pin.getPin(), pin.getName(), PinState.LOW);
 			outputPin.setShutdownOptions(true, PinState.LOW);
 			switchers.add(outputPin);
 		}
@@ -67,8 +67,6 @@ public class GpioControl {
 			switchersMap.put("name", pin.getName());
 			output.add(switchersMap);
 		}
-
-		System.out.println(output);
 
 		return output;
 	}

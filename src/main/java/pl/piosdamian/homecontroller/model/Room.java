@@ -6,7 +6,6 @@ public class Room {
 
 	@Override
 	public String toString() {
-		return "Room [name=" + pin.getProp().getName() + ", turnedOn="
-				+ turnedOn + "]";
+		return "Room [name=" + pin.getName() + ", turnedOn=" + turnedOn + "]";
 	}
 }
