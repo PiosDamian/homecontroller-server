@@ -68,6 +68,8 @@ public class GpioControl {
 			output.add(switchersMap);
 		}
 
+		System.out.println(output);
+
 		return output;
 	}
 
