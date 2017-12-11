@@ -63,7 +63,7 @@ public class GpioControl {
 
 		for (GpioPinDigitalOutput pin : switchers) {
 			Map<String, Object> switchersMap = new HashMap<>();
-			switchersMap.put("pin", pin.getPin());
+			switchersMap.put("pin", pin.getPin().getAddress());
 			switchersMap.put("name", pin.getName());
 			output.add(switchersMap);
 		}
