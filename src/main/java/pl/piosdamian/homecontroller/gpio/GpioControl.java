@@ -12,7 +12,6 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 
@@ -59,13 +58,17 @@ public class GpioControl {
 		return null;
 	}
 
-	public Map<Pin, String> getSwitchers() {
-		Map<Pin, String> switchersMap = new HashMap<>();
+	public List<Map<String, Object>> getSwitchers() {
+		List<Map<String, Object>> output = new ArrayList<>();
+
 		for (GpioPinDigitalOutput pin : switchers) {
-			switchersMap.put(pin.getPin(), pin.getName());
+			Map<String, Object> switchersMap = new HashMap<>();
+			switchersMap.put("pin", pin.getPin());
+			switchersMap.put("name", pin.getName());
+			output.add(switchersMap);
 		}
 
-		return switchersMap;
+		return output;
 	}
 
 	public List<GpioPinDigitalInput> getWatchers() {
