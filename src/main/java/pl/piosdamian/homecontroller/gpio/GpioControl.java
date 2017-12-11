@@ -58,12 +58,12 @@ public class GpioControl {
 		return null;
 	}
 
-	public List<Map<String, Object>> getSwitchers() {
-		List<Map<String, Object>> output = new ArrayList<>();
+	public List<Map<String, String>> getSwitchers() {
+		List<Map<String, String>> output = new ArrayList<>();
 
 		for (GpioPinDigitalOutput pin : switchers) {
-			Map<String, Object> switchersMap = new HashMap<>();
-			switchersMap.put("pin", pin.getPin());
+			Map<String, String> switchersMap = new HashMap<>();
+			switchersMap.put("pin", pin.getPin().toString());
 			switchersMap.put("name", pin.getName());
 			output.add(switchersMap);
 		}
