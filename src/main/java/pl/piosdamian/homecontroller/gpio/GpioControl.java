@@ -71,8 +71,16 @@ public class GpioControl {
 		return output;
 	}
 
-	public List<GpioPinDigitalInput> getWatchers() {
-		return watchers;
+	public List<Map<String, Object>> getWatchers() {
+		List<Map<String, Object>> input = new ArrayList<>();
+
+		for (GpioPinDigitalInput pin : watchers) {
+			Map<String, Object> watcherMap = new HashMap<>();
+			watcherMap.put("pin", pin.getPin().getAddress());
+			watcherMap.put("name", pin.getName());
+			input.add(watcherMap);
+		}
+		return input;
 	}
 
 	// @SuppressWarnings("unused")

@@ -1,5 +1,6 @@
 package pl.piosdamian.homecontroller.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,11 @@ public class RESTController {
 
 	@CrossOrigin
 	@GetMapping("/all")
-	public List<Map<String, Object>> all() {
-		return gpioController.getSwitchers();
+	public Map<String, List<Map<String, Object>>> all() {
+		Map<String, List<Map<String, Object>>> all = new HashMap<>();
+		all.put("switchers", gpioController.getSwitchers());
+		all.put("watchers", gpioController.getWatchers());
+		return all;
 	}
 
 }
