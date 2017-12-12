@@ -23,8 +23,12 @@ public class RESTController {
 
 	@CrossOrigin
 	@PostMapping("/register")
-	public void register(@RequestParam("newDev") PinModel newDev) {
-		System.out.println(newDev);
+	public void register(@RequestParam("address") int address,
+			@RequestParam("name") String name,
+			@RequestParam("role") PinType role) {
+		System.out.println(address);
+		System.out.println(name);
+		System.out.println(role);
 		PinModel pin = new PinModel(1, "Pokój 1", PinType.OUTPUT);
 		gpioController.addPin(pin);
 		PinModel pin2 = new PinModel(2, "Pokój 2", PinType.OUTPUT);
