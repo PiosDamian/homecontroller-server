@@ -76,8 +76,8 @@ public class GpioControl {
 
 		for (GpioPinDigitalInput pin : watchers) {
 			Map<String, Object> watcherMap = new HashMap<>();
-			watcherMap.put("pin", pin.getPin().getAddress());
 			watcherMap.put("name", pin.getName());
+			watcherMap.put("state", pin.getState());
 			input.add(watcherMap);
 		}
 		return input;
