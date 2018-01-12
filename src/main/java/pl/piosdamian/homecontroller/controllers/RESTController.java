@@ -6,9 +6,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,10 +25,10 @@ public class RESTController {
 	GpioControl gpioController;
 
 	@CrossOrigin
-	@PostMapping("/register")
+	@PostMapping("/register/{role}")
 	public void register(@RequestParam("address") int address,
 			@RequestParam("name") String name,
-			@RequestParam("role") PinType role) {
+			@PathVariable("role") PinType role) {
 
 		PinModel pin = new PinModel(address, name, role);
 		gpioController.addPin(pin);
@@ -47,4 +49,24 @@ public class RESTController {
 		return all;
 	}
 
+	@CrossOrigin
+	@PutMapping("/sensors/{address}")
+	public void updateSensor(@RequestParam("name") String name,
+			@PathVariable("address") String address) {
+
+	}
+
+	@CrossOrigin
+	@GetMapping("/sensors")
+	public Map<String, List<Map<String, Object>>> sensors() {
+		Map<String, List<Map<String, Object>>> sensors = new HashMap<>();
+
+		return sensors;
+	}
+
+	@CrossOrigin
+	@DeleteMapping("/delete{address}")
+	public void removeDevice(@PathVariable("address") int address) {
+
+	}
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigital;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinPullResistance;
@@ -35,13 +36,9 @@ public class GpioControl {
 
 	public void addPin(PinModel pin) {
 		if (pin.getRole() == PinType.INPUT) {
-			watchers.add(gpio.provisionDigitalInputPin(pin.getPin(),
-					pin.getName(), PinPullResistance.PULL_DOWN));
+			watchers.add(createInputPin(pin));
 		} else if (pin.getRole() == PinType.OUTPUT) {
-			GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(
-					pin.getPin(), pin.getName(), PinState.LOW);
-			outputPin.setShutdownOptions(true, PinState.LOW);
-			switchers.add(outputPin);
+			switchers.add(createOutputPin(pin));
 		}
 	}
 
@@ -51,7 +48,7 @@ public class GpioControl {
 
 	private GpioPinDigitalOutput findOutputPin(int address) {
 		for (GpioPinDigitalOutput pin : switchers) {
-			if (pin.getPin().equals(Resolver.resolve(address))) {
+			if (pin.getPin().getAddress() == address) {
 				return pin;
 			}
 		}
@@ -76,11 +73,22 @@ public class GpioControl {
 
 		for (GpioPinDigitalInput pin : watchers) {
 			Map<String, Object> watcherMap = new HashMap<>();
+			watcherMap.put("pin", pin.getPin().getAddress());
 			watcherMap.put("name", pin.getName());
 			watcherMap.put("state", pin.getState());
 			input.add(watcherMap);
 		}
 		return input;
+	}
+
+	public List<Map<String, Object>> getSensors() {
+		List<Map<String, Object>> sensors = new ArrayList<>();
+
+		return sensors;
+	}
+
+	public void deleteDevice(int address) {
+
 	}
 
 	// @SuppressWarnings("unused")
@@ -92,4 +100,24 @@ public class GpioControl {
 	// }
 	// return null;
 	// }
+
+	private GpioPinDigitalInput createInputPin(PinModel pin) {
+		GpioPinDigitalInput inputPin = gpio.provisionDigitalInputPin(
+				pin.getPin(), pin.getName(), PinPullResistance.PULL_DOWN);
+
+		setShutdown(inputPin);
+		return inputPin;
+	}
+
+	private GpioPinDigitalOutput createOutputPin(PinModel pin) {
+		GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(
+				pin.getPin(), pin.getName(), PinState.LOW);
+
+		setShutdown(outputPin);
+		return outputPin;
+	}
+
+	private void setShutdown(GpioPinDigital pin) {
+		pin.setShutdownOptions(true, PinState.LOW, PinPullResistance.OFF);
+	}
 }
