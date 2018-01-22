@@ -65,8 +65,8 @@ public class RESTController {
 	}
 
 	@CrossOrigin
-	@DeleteMapping("/delete{address}")
+	@DeleteMapping("/delete/{address}")
 	public void removeDevice(@PathVariable("address") int address) {
-
+		gpioController.deleteDevice(address);
 	}
 }

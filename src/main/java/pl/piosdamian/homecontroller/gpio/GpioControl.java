@@ -18,6 +18,7 @@ import com.pi4j.io.gpio.PinState;
 
 import pl.piosdamian.homecontroller.enums.PinType;
 import pl.piosdamian.homecontroller.model.PinModel;
+import pl.piosdamian.homecontroller.utils.ConfigHandler;
 
 @Controller
 public class GpioControl {
@@ -30,15 +31,17 @@ public class GpioControl {
 
 	public GpioControl() {
 		gpio = GpioFactory.getInstance();
-		switchers = new ArrayList<>();
-		watchers = new ArrayList<>();
+		switchers = ConfigHandler.readOutputPins();
+		watchers = ConfigHandler.readInputPins();
 	}
 
 	public void addPin(PinModel pin) {
 		if (pin.getRole() == PinType.INPUT) {
 			watchers.add(createInputPin(pin));
+			ConfigHandler.saveInputPins(watchers);
 		} else if (pin.getRole() == PinType.OUTPUT) {
 			switchers.add(createOutputPin(pin));
+			ConfigHandler.saveOutputPins(switchers);
 		}
 	}
 
@@ -88,18 +91,26 @@ public class GpioControl {
 	}
 
 	public void deleteDevice(int address) {
+		boolean deleted = false;
+		for (GpioPinDigitalInput s : watchers) {
+			if (s.getPin().getAddress() == address) {
+				watchers.remove(s);
+				ConfigHandler.saveInputPins(watchers);
+				deleted = true;
+				break;
+			}
+		}
+		if (!deleted) {
+			for (GpioPinDigitalOutput s : switchers) {
+				if (s.getPin().getAddress() == address) {
+					switchers.remove(s);
+					ConfigHandler.saveOutputPins(switchers);
+					break;
+				}
+			}
+		}
 
 	}
-
-	// @SuppressWarnings("unused")
-	// private GpioPinDigitalInput findInputPin(int address) {
-	// for (GpioPinDigitalInput pin : watchers) {
-	// if (pin.getPin() == Resolver.resolve(address)) {
-	// return pin;
-	// }
-	// }
-	// return null;
-	// }
 
 	private GpioPinDigitalInput createInputPin(PinModel pin) {
 		GpioPinDigitalInput inputPin = gpio.provisionDigitalInputPin(
