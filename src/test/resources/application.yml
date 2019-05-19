@@ -1,0 +1,5 @@
+server:
+  port: 5001
+
+logger.level:
+  com.pi4j.: OFF

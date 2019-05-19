@@ -1,0 +1,8 @@
+server.port: 5000
+
+logging:
+  level.: INFO
+
+gpio:
+  output:
+    blink-duration: 1000
