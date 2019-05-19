@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 @Slf4j
+@Profile("!rasp")
 public class MockGPIOController implements GPIOController {
     private Map<Integer, Device> devices = new HashMap<>();
     @Getter

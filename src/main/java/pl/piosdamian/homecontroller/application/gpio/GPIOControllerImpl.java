@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Profile("!test")
 public class GPIOControllerImpl implements GPIOController {
     private final GpioController gpio;
     private final GpioConfiguration gpioConfiguration;
