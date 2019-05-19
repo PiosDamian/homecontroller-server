@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.piosdamian.homecontroller.application.gpio.GPIOController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class Gateway {
@@ -18,19 +20,19 @@ public class Gateway {
     }
 
     @PostMapping("/switcher")
-    public ResponseEntity registerSwitcher(@RequestBody SwitcherRequestBody switcherRequestBody) {
+    public ResponseEntity registerSwitcher(@RequestBody SwitcherRequestBody switcherRequestBody) throws IOException {
         Integer listenerAddress = switcherRequestBody.getListenerAddress();
         if(listenerAddress == null) {
-            this.gpioController.registerSwitcher(switcherRequestBody.getPinAddress(), switcherRequestBody.getName());
+            this.gpioController.registerSwitcher(switcherRequestBody.getPinAddress(), switcherRequestBody.getName(), switcherRequestBody.isForce());
         } else {
-            this.gpioController.registerSwitcher(switcherRequestBody.getPinAddress(), switcherRequestBody.getName(), listenerAddress);
+            this.gpioController.registerSwitcher(switcherRequestBody.getPinAddress(), switcherRequestBody.getName(), listenerAddress, switcherRequestBody.isForce());
         }
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/switcher/{address}")
-    public ResponseEntity addListener(@PathVariable("address") int switcherAddress, @RequestBody UpdateSwitcherRequestBody body) {
+    public ResponseEntity addListener(@PathVariable("address") int switcherAddress, @RequestBody UpdateSwitcherRequestBody body) throws IOException {
         if (body.getName() != null) {
             this.gpioController.updateName(switcherAddress, body.getName());
         }
@@ -45,7 +47,7 @@ public class Gateway {
     }
 
     @DeleteMapping("/switcher/{address}")
-    public ResponseEntity deleteSwitcher(@PathVariable("address") int address) {
+    public ResponseEntity deleteSwitcher(@PathVariable("address") int address) throws IOException {
         this.gpioController.deleteSwitcher(address);
         return ResponseEntity.ok().build();
     }

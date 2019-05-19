@@ -7,4 +7,5 @@ public class SwitcherRequestBody {
     private Integer pinAddress;
     private String name;
     private Integer listenerAddress;
+    private boolean force;
 }
