@@ -24,7 +24,7 @@ public class GPIOControllerImplTest {
     @Ignore
     //manual test
     public void blink() throws IOException {
-        controller.registerSwitcher(16, "LED", true);
-        controller.blink(16);
+        controller.registerSwitcher(29, "LED", true);
+        controller.blink(29);
     }
 }

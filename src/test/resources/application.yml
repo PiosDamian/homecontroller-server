@@ -3,3 +3,7 @@ server:
 
 logger.level:
   com.pi4j.: OFF
+
+gpio:
+  output:
+    blink-duration: 1000
