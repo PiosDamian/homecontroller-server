@@ -26,12 +26,12 @@ public class MockGPIOController implements GPIOController {
     private List<Integer> calls = new ArrayList<>();
 
     @Override
-    public void registerSwitcher(int pinAddress, String name) {
+    public void registerSwitcher(int pinAddress, String name, boolean force) {
         devices.put(pinAddress, new Device(name, null));
     }
 
     @Override
-    public void registerSwitcher(int pinAddress, String name, int listenerAddress) {
+    public void registerSwitcher(int pinAddress, String name, int listenerAddress, boolean force) {
         devices.put(pinAddress, new Device(name, listenerAddress));
     }
 
