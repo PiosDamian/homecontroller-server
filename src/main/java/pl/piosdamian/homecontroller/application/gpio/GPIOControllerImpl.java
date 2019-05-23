@@ -46,11 +46,13 @@ public class GPIOControllerImpl implements GPIOController {
         });
     }
 
+    @Override
     public void registerSwitcher(int pinAddress, String name, boolean force) throws IOException {
         createSwitcherDevice(pinAddress, name, force);
         pinsConfiguration.serializePins(this.switcherDevices);
     }
 
+    @Override
     public void registerSwitcher(int pinAddress, String name, int listenerAddress, boolean force) throws IOException {
         createSwitcherWithListener(pinAddress, name, listenerAddress, force);
         pinsConfiguration.serializePins(this.switcherDevices);

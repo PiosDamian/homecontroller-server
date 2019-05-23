@@ -19,6 +19,11 @@ public class SwitcherGateway {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/switchers")
+    public ResponseEntity getSwitchers() {
+        return ResponseEntity.ok(gpioController.getDevices());
+    }
+
     @PostMapping("/switcher")
     public ResponseEntity registerSwitcher(@RequestBody SwitcherRequestBody switcherRequestBody) throws IOException {
         Integer listenerAddress = switcherRequestBody.getListenerAddress();
