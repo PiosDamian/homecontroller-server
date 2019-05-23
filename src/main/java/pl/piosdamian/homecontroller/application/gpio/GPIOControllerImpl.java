@@ -5,7 +5,9 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.configuration.GpioConfiguration;
-import pl.piosdamian.homecontroller.application.model.*;
+import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
+import pl.piosdamian.homecontroller.application.model.SwitcherDevice;
+import pl.piosdamian.homecontroller.application.model.SwitcherState;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
 
 import java.io.IOException;
@@ -35,24 +37,35 @@ public class GPIOControllerImpl implements GPIOController {
             tmp = null;
         }
         this.gpio = tmp;
+        pinsConfiguration.deserializePins().forEach(switcher -> {
+            if (switcher.getListenerAddress() == null) {
+                createSwitcherDevice(switcher.getAddress(), switcher.getName(), true);
+            } else {
+                createSwitcherWithListener(switcher.getAddress(), switcher.getName(), switcher.getListenerAddress(), true);
+            }
+        });
     }
 
     public void registerSwitcher(int pinAddress, String name, boolean force) throws IOException {
         createSwitcherDevice(pinAddress, name, force);
-        pinsConfiguration.serialize(this.switcherDevices);
+        pinsConfiguration.serializePins(this.switcherDevices);
     }
 
     public void registerSwitcher(int pinAddress, String name, int listenerAddress, boolean force) throws IOException {
+        createSwitcherWithListener(pinAddress, name, listenerAddress, force);
+        pinsConfiguration.serializePins(this.switcherDevices);
+    }
+
+    private void createSwitcherWithListener(int pinAddress, String name, int listenerAddress, boolean force) {
         SwitcherDevice switcherDevice = createSwitcherDevice(pinAddress, name, force);
         addListener(createInputPin(listenerAddress), switcherDevice);
-        pinsConfiguration.serialize(this.switcherDevices);
     }
 
     @Override
     public void deleteSwitcher(int pinAddress) throws IOException {
         SwitcherDevice switcherDevice = this.switcherDevices.remove(pinAddress);
         Optional.ofNullable(switcherDevice.getListener()).ifPresent(GpioPin::removeAllListeners);
-        pinsConfiguration.serialize(this.switcherDevices);
+        pinsConfiguration.serializePins(this.switcherDevices);
     }
 
     @Override
@@ -61,13 +74,13 @@ public class GPIOControllerImpl implements GPIOController {
             Optional.ofNullable(switcher.getListener()).ifPresent(GpioPin::removeAllListeners);
             addListener(createInputPin(listenerAddress), switcher);
         });
-        pinsConfiguration.serialize(this.switcherDevices);
+        pinsConfiguration.serializePins(this.switcherDevices);
     }
 
     @Override
     public void updateName(int switcherAddress, String name) throws IOException {
         this.switcherDevices.get(switcherAddress).setName(name);
-        pinsConfiguration.serialize(this.switcherDevices);
+        pinsConfiguration.serializePins(this.switcherDevices);
     }
 
     public void blink(int address) {
@@ -89,10 +102,10 @@ public class GPIOControllerImpl implements GPIOController {
     }
 
     private SwitcherDevice createSwitcherDevice(int pinAddress, String name, boolean force) {
-        if(switcherDevices.containsKey(pinAddress) && !force) {
+        if (switcherDevices.containsKey(pinAddress) && !force) {
             throw new GpioControllerException("Pin already in use");
         }
-        if(switcherDevices.containsKey(pinAddress)) {
+        if (switcherDevices.containsKey(pinAddress)) {
             Optional.ofNullable(switcherDevices.get(pinAddress).getListener()).ifPresent(GpioPin::removeAllListeners);
         }
         SwitcherDevice switcherDevice = new SwitcherDevice();
