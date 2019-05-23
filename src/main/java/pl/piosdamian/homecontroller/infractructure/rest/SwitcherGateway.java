@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-public class Gateway {
+public class SwitcherGateway {
 
     private final GPIOController gpioController;
 

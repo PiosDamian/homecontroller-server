@@ -4,6 +4,8 @@ import com.pi4j.io.gpio.GpioPinDigitalInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
+import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
 import pl.piosdamian.homecontroller.application.model.SwitcherDevice;
 import pl.piosdamian.homecontroller.application.utils.Mapper;
@@ -18,10 +20,11 @@ import java.util.stream.Collectors;
 
 import static pl.piosdamian.homecontroller.application.utils.Mapper.JSON_MAPPER;
 
+@Service
 public class PinsConfiguration {
     private final static String FILENAME = "pins.json";
 
-    public static void serialize(Map<Integer, SwitcherDevice> devices) throws IOException {
+    public void serializePins(Map<Integer, SwitcherDevice> devices) throws IOException {
         final List<SwitcherDTO> collect = devices.entrySet()
                 .stream()
                 .map(entry -> {
@@ -41,6 +44,10 @@ public class PinsConfiguration {
             fos.write(JSON_MAPPER.writeValueAsBytes(collect));
         }
     }
+
+    public void serializeSensors(Map<String, SensorDevice> sensorDeviceMap) {}
+    
+
 
     @Data
     @NoArgsConstructor
