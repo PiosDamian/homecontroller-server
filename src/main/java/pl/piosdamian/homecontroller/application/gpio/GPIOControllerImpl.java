@@ -53,11 +53,6 @@ public class GPIOControllerImpl implements GPIOController {
         pinsConfiguration.serializePins(this.switcherDevices);
     }
 
-    private void createSwitcherWithListener(int pinAddress, String name, int listenerAddress, boolean force) {
-        SwitcherDevice switcherDevice = createSwitcherDevice(pinAddress, name, force);
-        addListener(createInputPin(listenerAddress), switcherDevice);
-    }
-
     @Override
     public void deleteSwitcher(int pinAddress) throws IOException {
         SwitcherDevice switcherDevice = this.switcherDevices.remove(pinAddress);
@@ -107,7 +102,13 @@ public class GPIOControllerImpl implements GPIOController {
         SwitcherDevice switcherDevice = new SwitcherDevice();
         switcherDevice.setBlinker(createOutputPin(pinAddress, name));
         switcherDevice.setName(name);
-        return switcherDevices.put(pinAddress, switcherDevice);
+        switcherDevices.put(pinAddress, switcherDevice);
+        return switcherDevice;
+    }
+
+    private void createSwitcherWithListener(int pinAddress, String name, int listenerAddress, boolean force) {
+        SwitcherDevice switcherDevice = createSwitcherDevice(pinAddress, name, force);
+        addListener(createInputPin(listenerAddress), switcherDevice);
     }
 
     private void addListener(GpioPinDigitalInput input, SwitcherDevice device) {
