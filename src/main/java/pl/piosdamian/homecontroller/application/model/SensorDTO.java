@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class SensorDTO {
     private String address;
     private String name;
-    private String value;
+    private Double value;
+    private String units;
 }

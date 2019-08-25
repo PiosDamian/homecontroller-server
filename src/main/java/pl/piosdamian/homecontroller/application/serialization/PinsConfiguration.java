@@ -5,23 +5,27 @@ import com.pi4j.io.gpio.GpioPinDigitalInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.piosdamian.homecontroller.application.configuration.GpioConfiguration;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.model.SwitcherDevice;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pl.piosdamian.homecontroller.application.utils.Mapper.JSON_MAPPER;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PinsConfiguration {
     private final static String PINS_JSON = "pins.json";
+    private final static String SENSORS_JSON = "sensors.json";
+
+    private final GpioConfiguration gpioConfiguration;
 
     public void serializePins(Map<Integer, SwitcherDevice> devices) throws IOException {
         final List<SwitcherSerializationDTO> collect = devices.entrySet()
@@ -39,23 +43,45 @@ public class PinsConfiguration {
                 })
                 .collect(Collectors.toList());
 
-        try (FileOutputStream fos = new FileOutputStream(new File(PINS_JSON))) {
+        try (FileOutputStream fos = new FileOutputStream(new File(createPath(PINS_JSON)))) {
             fos.write(JSON_MAPPER.writeValueAsBytes(collect));
         }
     }
 
-    public List<SwitcherSerializationDTO> deserializePins() {
-        try(final FileInputStream fis = new FileInputStream(new File(PINS_JSON))) {
+    public List<SwitcherSerializationDTO> deserializePins() throws IOException {
+        final File pinsFile = new File(createPath(PINS_JSON));
+        if(pinsFile.exists()) {
+        try(final FileInputStream fis = new FileInputStream(pinsFile)) {
             return JSON_MAPPER.readValue(fis, new TypeReference<List<SwitcherSerializationDTO>>() {});
         } catch (IOException e) {
             log.warn("Can not read pins configuration file");
+            throw e;
         }
-        return new ArrayList<>();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
-    public void serializeSensors(Map<String, SensorDevice> sensorDeviceMap) {}
+    public void serializeSensors(Map<String, SensorDevice> sensorDeviceMap) throws IOException {
+        try(final FileOutputStream fos = new FileOutputStream(createPath(SENSORS_JSON))) {
+            fos.write(JSON_MAPPER.writeValueAsBytes(sensorDeviceMap));
+        }
+    }
 
+    public Map<String, SensorDevice> deserializeSensors() throws IOException {
+        final File sensorsFile = new File(createPath(SENSORS_JSON));
+        if(sensorsFile.exists()) {
+        try(final FileInputStream fis = new FileInputStream(sensorsFile)) {
+            return JSON_MAPPER.readValue(fis, new TypeReference<Map<String,SensorDevice>>(){});
+        }
+        } else {
+            return new HashMap<>();
+        }
+    }
 
+    private String createPath(String fileName) {
+        return this.gpioConfiguration.getConfigFilePath() + File.separator + fileName;
+    }
 
     @Data
     @NoArgsConstructor

@@ -6,3 +6,4 @@ logging:
 gpio:
   output:
     blink-duration: 1000
+  configFilePath: "/usr/share/homecontroller/config"

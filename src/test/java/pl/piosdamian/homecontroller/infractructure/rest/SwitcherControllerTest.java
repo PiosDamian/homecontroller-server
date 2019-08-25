@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class SwitcherGatewayTest {
+public class SwitcherControllerTest {
 
     @Test
     public void switchPin() {

@@ -1,5 +1,6 @@
 package pl.piosdamian.homecontroller.application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
@@ -7,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class SwitcherDevice {
+    @JsonIgnore
     private GpioPinDigitalOutput blinker;
     private String name;
     private GpioPinDigitalInput listener;

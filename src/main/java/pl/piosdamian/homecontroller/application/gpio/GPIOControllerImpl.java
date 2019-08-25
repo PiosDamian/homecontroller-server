@@ -3,6 +3,7 @@ package pl.piosdamian.homecontroller.application.gpio;
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.configuration.GpioConfiguration;
 import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Profile("rasp")
 public class GPIOControllerImpl implements GPIOController {
     private final GpioController gpio;
     private final GpioConfiguration gpioConfiguration;
@@ -26,17 +28,10 @@ public class GPIOControllerImpl implements GPIOController {
 
     private Map<Integer, SwitcherDevice> switcherDevices = new HashMap<>();
 
-    public GPIOControllerImpl(GpioConfiguration gpioConfiguration, PinsConfiguration pinsConfiguration) {
+    public GPIOControllerImpl(GpioConfiguration gpioConfiguration, PinsConfiguration pinsConfiguration) throws IOException {
         this.gpioConfiguration = gpioConfiguration;
         this.pinsConfiguration = pinsConfiguration;
-        GpioController tmp;
-        try {
-            tmp = GpioFactory.getInstance();
-        } catch (Throwable t) {
-            log.warn("Platform not supported, {}", t.getMessage());
-            tmp = null;
-        }
-        this.gpio = tmp;
+        this.gpio = GpioFactory.getInstance();
         pinsConfiguration.deserializePins().forEach(switcher -> {
             if (switcher.getListenerAddress() == null) {
                 createSwitcherDevice(switcher.getAddress(), switcher.getName(), true);
@@ -90,8 +85,7 @@ public class GPIOControllerImpl implements GPIOController {
                 switcherDevices
                         .get(address)
                         .getBlinker()
-                        .pulse(gpioConfiguration.getOutput().getBlinkDuration()))
-                .run();
+                        .pulse(gpioConfiguration.getOutput().getBlinkDuration())).start();
     }
 
     @Override

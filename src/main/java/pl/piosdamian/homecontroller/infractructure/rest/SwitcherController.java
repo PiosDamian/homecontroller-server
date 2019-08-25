@@ -1,15 +1,18 @@
 package pl.piosdamian.homecontroller.infractructure.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.piosdamian.homecontroller.application.gpio.GPIOController;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.SwitcherRequestBody;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.UpdateSwitcherRequestBody;
 
 import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-public class SwitcherGateway {
+public class SwitcherController {
 
     private final GPIOController gpioController;
 
@@ -55,5 +58,10 @@ public class SwitcherGateway {
     public ResponseEntity deleteSwitcher(@PathVariable("address") int address) throws IOException {
         this.gpioController.deleteSwitcher(address);
         return ResponseEntity.ok().build();
+    }
+
+    @ExceptionHandler(IOException.class)
+    private ResponseEntity handleIOException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Configuration could not be stored");
     }
 }

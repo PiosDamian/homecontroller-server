@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.model.SensorDTO;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.model.SensorUpdateObject;
+import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,8 +19,11 @@ public class SensorControllerImpl implements SensorsController {
 
     private Map<String, SensorDevice> sensors = new HashMap<>();
 
-    public SensorControllerImpl() {
-       this.refresh();
+    private final PinsConfiguration pinsConfiguration;
+
+    public SensorControllerImpl(PinsConfiguration pinsConfiguration) {
+        this.pinsConfiguration = pinsConfiguration;
+        this.refresh();
     }
 
     @Override
@@ -33,6 +37,14 @@ public class SensorControllerImpl implements SensorsController {
                 sensorDevice.setDevice(w1Device);
                 sensors.put(w1Device.getName(), sensorDevice);
             });
+            pinsConfiguration.deserializeSensors().forEach((name, storedSensor) -> {
+                if(this.sensors.containsKey(name)) {
+                    final SensorDevice sensorDevice = this.sensors.get(name);
+                    sensorDevice.setName(storedSensor.getName());
+                    sensorDevice.setFactory(storedSensor.getFactory());
+                    sensorDevice.setUnits(storedSensor.getUnits());
+                }
+            });
         } catch (Throwable t) {
             log.warn("Problem with retrieving 1-wire devices");
         }
@@ -43,20 +55,24 @@ public class SensorControllerImpl implements SensorsController {
         return this.sensors.entrySet()
                 .stream()
                 .map(sensorDeviceEntry -> {
-                    String value;
+                    Double value = null;
                     try {
                         value = sensorDeviceEntry.getValue().getDeviceValue();
                     } catch (IOException e) {
                         log.warn("Can not read value for {}", sensorDeviceEntry.getKey());
-                        value = "";
                     }
-                    return new SensorDTO(sensorDeviceEntry.getKey(), sensorDeviceEntry.getValue().getName(), value);
+                    return new SensorDTO(
+                            sensorDeviceEntry.getKey(),
+                            sensorDeviceEntry.getValue().getName(),
+                            value,
+                            sensorDeviceEntry.getValue().getUnits()
+                    );
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public SensorDTO updateSensor(String address, SensorUpdateObject updateObject) {
+    public SensorDTO updateSensor(String address, SensorUpdateObject updateObject) throws IOException {
         final Optional<SensorDevice> optionalSensorDevice = Optional.ofNullable(this.sensors.get(address));
         if (optionalSensorDevice.isPresent()) {
             final SensorDevice sensorDevice = optionalSensorDevice.get();
@@ -65,19 +81,20 @@ public class SensorControllerImpl implements SensorsController {
                 sensorDevice.setName(updateObject.getName());
             }
 
-            Optional.ofNullable(updateObject.getMultiplier()).ifPresent(sensorDevice::setMultiplier);
+            Optional.ofNullable(updateObject.getMultiplier()).ifPresent(sensorDevice::setFactory);
 
             if (Objects.nonNull(updateObject.getUnits())) {
                 sensorDevice.setUnits(updateObject.getUnits());
             }
 
-            String deviceValue;
+            Double deviceValue;
             try {
                 deviceValue = sensorDevice.getDeviceValue();
             } catch (IOException e) {
-                deviceValue = "";
+                deviceValue = null;
             }
-            return new SensorDTO(address, sensorDevice.getName(), deviceValue);
+            pinsConfiguration.serializeSensors(this.sensors);
+            return new SensorDTO(address, sensorDevice.getName(), deviceValue, sensorDevice.getUnits());
         } else {
             throw new NoSuchElementException("Address not found");
         }

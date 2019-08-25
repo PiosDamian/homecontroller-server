@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.infractructure.rest;
+package pl.piosdamian.homecontroller.infractructure.rest.dto;
 
 import lombok.Data;
 
