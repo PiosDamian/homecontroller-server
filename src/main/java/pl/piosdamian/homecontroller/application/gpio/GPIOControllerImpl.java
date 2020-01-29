@@ -5,15 +5,17 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import pl.piosdamian.homecontroller.application.communication.Broadcaster;
 import pl.piosdamian.homecontroller.application.configuration.GpioConfiguration;
-import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
 import pl.piosdamian.homecontroller.application.model.SwitcherDevice;
-import pl.piosdamian.homecontroller.application.model.SwitcherState;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.StateChangeDTO;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherDTO;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherState;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +27,17 @@ public class GPIOControllerImpl implements GPIOController {
     private final GpioController gpio;
     private final GpioConfiguration gpioConfiguration;
     private final PinsConfiguration pinsConfiguration;
+    private final Broadcaster broadcaster;
 
     private Map<Integer, SwitcherDevice> switcherDevices = new HashMap<>();
 
-    public GPIOControllerImpl(GpioConfiguration gpioConfiguration, PinsConfiguration pinsConfiguration) throws IOException {
+    public GPIOControllerImpl(
+            final GpioConfiguration gpioConfiguration,
+            final PinsConfiguration pinsConfiguration,
+            final Broadcaster broadcaster) throws IOException {
         this.gpioConfiguration = gpioConfiguration;
         this.pinsConfiguration = pinsConfiguration;
+        this.broadcaster = broadcaster;
         this.gpio = GpioFactory.getInstance();
         pinsConfiguration.deserializePins().forEach(switcher -> {
             if (switcher.getListenerAddress() == null) {
@@ -84,11 +91,11 @@ public class GPIOControllerImpl implements GPIOController {
     }
 
     @Override
-    public List<SwitcherDTO> getDevices() {
+    public Collection<SwitcherDTO> getSwitchers() {
         return this.switcherDevices
                 .entrySet()
                 .stream()
-                .map(entry -> new SwitcherDTO(entry.getKey(), entry.getValue().getName(), entry.getValue().getState().name()))
+                .map(entry -> new SwitcherDTO(entry.getKey(), entry.getValue().getName(), entry.getValue().getState()))
                 .collect(Collectors.toList());
     }
 
@@ -114,8 +121,11 @@ public class GPIOControllerImpl implements GPIOController {
     private void addListener(GpioPinDigitalInput input, SwitcherDevice device) {
         device.setListener(input);
         input.addListener((GpioPinListenerDigital) event -> {
-            device.setState(event.getState().getValue() == 0 ? SwitcherState.OFF : SwitcherState.ON);
-            // todo: send info to emmiter
+            final SwitcherState state = event.getState().getValue() == 0 ? SwitcherState.OFF : SwitcherState.ON;
+            device.setState(state);
+            final StateChangeDTO stateChangeDTO =
+                    new StateChangeDTO(device.getBlinker().getPin().getAddress(), device.getState());
+            broadcaster.next("stateUpdate", stateChangeDTO);
         });
     }
 

@@ -3,7 +3,9 @@ server.port: 5000
 logging:
   level.: INFO
 
+spring.mvc.async.request-timeout: -1 #-1 means infinity
+
 gpio:
   output:
     blink-duration: 1000
-  configFilePath: "/usr/share/homecontroller/config"
+  configDirectoryPath: "/usr/share/homecontroller/config"

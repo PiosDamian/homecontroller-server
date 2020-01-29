@@ -5,6 +5,7 @@ import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.PinState;
 import lombok.Data;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherState;
 
 @Data
 public class SwitcherDevice {

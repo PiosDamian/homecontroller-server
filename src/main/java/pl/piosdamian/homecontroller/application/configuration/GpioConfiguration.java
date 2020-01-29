@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "gpio")
 public class GpioConfiguration {
 
-    private String configFilePath = "";
+    private String configDirectoryPath = "";
     private Output output;
 
     @Data

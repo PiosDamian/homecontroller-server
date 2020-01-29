@@ -4,9 +4,9 @@ import com.pi4j.io.w1.W1Master;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import pl.piosdamian.homecontroller.application.model.SensorDTO;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SensorDTO;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
-import pl.piosdamian.homecontroller.application.model.SensorUpdateObject;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.request.SensorUpdateDTO;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class SensorControllerImpl implements SensorsController {
     }
 
     @Override
-    public SensorDTO updateSensor(String address, SensorUpdateObject updateObject) throws IOException {
+    public SensorDTO updateSensor(String address, SensorUpdateDTO updateObject) throws IOException {
         final Optional<SensorDevice> optionalSensorDevice = Optional.ofNullable(this.sensors.get(address));
         if (optionalSensorDevice.isPresent()) {
             final SensorDevice sensorDevice = optionalSensorDevice.get();
@@ -81,7 +81,7 @@ public class SensorControllerImpl implements SensorsController {
                 sensorDevice.setName(updateObject.getName());
             }
 
-            Optional.ofNullable(updateObject.getMultiplier()).ifPresent(sensorDevice::setFactory);
+            Optional.ofNullable(updateObject.getFactor()).ifPresent(sensorDevice::setFactory);
 
             if (Objects.nonNull(updateObject.getUnits())) {
                 sensorDevice.setUnits(updateObject.getUnits());

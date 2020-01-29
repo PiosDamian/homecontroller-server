@@ -80,7 +80,7 @@ public class PinsConfiguration {
     }
 
     private String createPath(String fileName) {
-        return this.gpioConfiguration.getConfigFilePath() + File.separator + fileName;
+        return this.gpioConfiguration.getConfigDirectoryPath() + File.separator + fileName;
     }
 
     @Data

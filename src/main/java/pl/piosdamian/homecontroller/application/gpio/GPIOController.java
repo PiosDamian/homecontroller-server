@@ -1,9 +1,9 @@
 package pl.piosdamian.homecontroller.application.gpio;
 
-import pl.piosdamian.homecontroller.application.model.SwitcherDTO;
+import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherDTO;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 public interface GPIOController {
     void registerSwitcher(int pinAddress, String name, boolean force) throws IOException;
@@ -12,5 +12,5 @@ public interface GPIOController {
     void updateListener(int switcherAddress, int listenerAddress) throws IOException;
     void updateName(int switcherAddress, String name) throws IOException;
     void blink(int address);
-    List<SwitcherDTO> getDevices();
+    Collection<SwitcherDTO> getSwitchers();
 }

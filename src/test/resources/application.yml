@@ -7,4 +7,8 @@ logger.level:
 gpio:
   output:
     blink-duration: 1000
-  configFilePath: "/user/share/homecontroller/config"
+  configDirectoryPath: "/user/share/homecontroller/config"
+
+event:
+  source:
+    timeout: -1
