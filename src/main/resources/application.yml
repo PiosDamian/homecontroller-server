@@ -1,4 +1,6 @@
-server.port: 5000
+server:
+  port: 5000
+  contextPath: "/gateway"
 
 logging:
   level.: INFO
