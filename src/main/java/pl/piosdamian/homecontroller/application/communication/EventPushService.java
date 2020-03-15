@@ -20,14 +20,13 @@ public class EventPushService implements Observable, Broadcaster {
     private long sseEmitterTimeout;
 
     @Override
-    public void next(String eventName, Object data) {
+    public void next(Object data) {
         final SseEmitter.SseEventBuilder eventBuilder = SseEmitter
                 .event()
-                .name(eventName)
                 .data(data, MediaType.APPLICATION_JSON_UTF8);
         this.observers.forEach((id, emitter) -> {
             try {
-                emitter.send(eventBuilder);
+                emitter.send(eventBuilder.build());
             } catch (IOException e) {
                 log.warn("Emitter with id {} thrown IOException: {}, will be removed", id, e.getMessage());
                 this.deadObservers.add(id);

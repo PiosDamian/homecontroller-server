@@ -2,6 +2,8 @@ package pl.piosdamian.homecontroller.application.gpio;
 
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -125,7 +127,7 @@ public class GPIOControllerImpl implements GPIOController {
             device.setState(state);
             final StateChangeDTO stateChangeDTO =
                     new StateChangeDTO(device.getBlinker().getPin().getAddress(), device.getState());
-            broadcaster.next("stateUpdate", stateChangeDTO);
+            broadcaster.next(new PushMessage("stateUpdate", stateChangeDTO));
         });
     }
 
@@ -135,5 +137,11 @@ public class GPIOControllerImpl implements GPIOController {
 
     private GpioPinDigitalInput createInputPin(int address) {
         return this.gpio.provisionDigitalInputPin(RaspiPin.getPinByAddress(address), PinPullResistance.PULL_DOWN);
+    }
+
+    @RequiredArgsConstructor
+    private static class PushMessage {
+        private final String type;
+        private final Object payload;
     }
 }
