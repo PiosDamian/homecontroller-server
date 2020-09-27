@@ -3,8 +3,8 @@ package pl.piosdamian.homecontroller.application.gpio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherDTO;
-import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherState;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherState;
 
 import java.io.IOException;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.*;
 @Slf4j
 public class MockGPIOControllerImpl implements GPIOController {
 
-    private Map<Integer, SwitcherDTO> switchers = new HashMap<>();
+    private final Map<Integer, SwitcherDTO> switchers = new HashMap<>();
 
     @Override
     public void registerSwitcher(int pinAddress, String name, boolean force) throws IOException {

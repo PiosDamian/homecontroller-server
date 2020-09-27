@@ -12,3 +12,8 @@ gpio:
 event:
   source:
     timeout: -1
+
+spring.profiles:
+  active:
+    - dev
+    - test

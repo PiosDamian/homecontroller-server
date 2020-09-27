@@ -3,37 +3,66 @@ package pl.piosdamian.homecontroller.application.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pi4j.io.w1.W1Device;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 @Data
 @Slf4j
 public class SensorDevice {
     @JsonIgnore
-    private final static Pattern VALUE_PATTERN = Pattern.compile("\\d+");
+    private final static Pattern VALUE_PATTERN = Pattern.compile("(?<=t=)\\d+");
+
+    @Setter
     private String name;
+
     @JsonIgnore
+    @Setter
     private W1Device device;
-    private double factory = 1;
+
+
+    private double factory = 0.001;
+
+    @Setter
     private String units = "";
 
     @JsonIgnore
-    public Double getDeviceValue() throws IOException {
+    private Double value;
+
+    @JsonIgnore
+    public void retrieveValue() {
         final Matcher matcher;
         try {
             matcher = VALUE_PATTERN.matcher(device.getValue());
         } catch (NullPointerException e) {
             log.warn("No device under name {}", this.name);
-            return null;
+            this.value = null;
+            return;
+        } catch (IOException e) {
+            log.warn("Problem with retrieving value {}, {}", this.name, e.getMessage());
+            this.value = null;
+            return;
         }
 
         Double value = null;
-        while (matcher.find()) {
+        if (matcher.find()) {
             value = Double.parseDouble(matcher.group());
         }
-        return value != null? value * factory: value;
+        this.setValue(value);
+    }
+
+
+    public void setFactory(double factory) {
+        this.factory = factory;
+        this.setValue(this.value);
+    }
+
+    private void setValue(Double rawValue) {
+        this.value =  rawValue != null? rawValue * factory: Double.MIN_VALUE;
     }
 }

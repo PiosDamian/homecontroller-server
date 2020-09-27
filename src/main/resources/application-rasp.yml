@@ -1,0 +1,10 @@
+gpio:
+  output:
+    blink-duration: 1000
+  configDirectoryPath: "./config"
+
+schedulers:
+  sensorValueUpdater:
+    enabled: true
+    initialDelay: 60000
+    fixedDelay: 60000

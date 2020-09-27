@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.infractructure.rest;
+package pl.piosdamian.homecontroller.interfaces.rest;
 
 import org.junit.Test;
 

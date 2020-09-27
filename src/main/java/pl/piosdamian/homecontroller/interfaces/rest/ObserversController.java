@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.infractructure.rest;
+package pl.piosdamian.homecontroller.interfaces.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ public class ObserversController {
 
     @GetMapping("/register")
     @CrossOrigin
-    public ResponseEntity<SseEmitter> registerObserver(@RequestParam String id) {
+    public ResponseEntity<SseEmitter> registerObserver(@RequestParam final String id) {
         return ResponseEntity.ok(this.observable.addObserver(id));
     }
 
-    @DeleteMapping("/unregister")
-    public ResponseEntity<Void> unregisterObserver(@RequestParam String id) {
+    @PostMapping("/unregister")
+    public ResponseEntity<Void> unregisterObserver(@RequestParam final String id) {
         this.observable.removeObserver(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

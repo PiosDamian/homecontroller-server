@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.infractructure.rest.dto.response;
+package pl.piosdamian.homecontroller.interfaces.rest.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

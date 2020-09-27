@@ -1,6 +1,6 @@
 package pl.piosdamian.homecontroller.application.gpio;
 
-import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SwitcherDTO;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
 
 import java.io.IOException;
 import java.util.Collection;

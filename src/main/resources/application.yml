@@ -1,13 +1,24 @@
 server:
   port: 5000
-  contextPath: "/gateway"
+  servlet:
+    context-path: "/gateway"
 
 logging:
   level.: INFO
 
 spring.mvc.async.request-timeout: -1 #-1 means infinity
 
-gpio:
-  output:
-    blink-duration: 1000
-  configDirectoryPath: "/usr/share/homecontroller/config"
+event:
+  source:
+    timeout: -1
+
+core.version: @project.version@
+
+service:
+  enableScheduling: true
+
+schedulers:
+  sensorValueUpdater:
+    enabled: true
+    initialDelay: 6000
+    fixedDelay: 6000

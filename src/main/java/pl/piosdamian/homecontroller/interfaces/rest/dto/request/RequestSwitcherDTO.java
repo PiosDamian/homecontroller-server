@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.infractructure.rest.dto.request;
+package pl.piosdamian.homecontroller.interfaces.rest.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -13,6 +13,10 @@ public class RequestSwitcherDTO {
      * name of switcher
      */
     private String name;
+    /**
+     * physical address of pin
+     */
+    private int address;
     /**
      * physical address of pin to which listener device is connected
      */

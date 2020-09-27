@@ -4,11 +4,12 @@ import com.pi4j.io.w1.W1Master;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import pl.piosdamian.homecontroller.infractructure.rest.dto.response.SensorDTO;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SensorDTO;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
-import pl.piosdamian.homecontroller.infractructure.rest.dto.request.SensorUpdateDTO;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.request.SensorUpdateDTO;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,16 +18,16 @@ import java.util.stream.Collectors;
 @Service
 public class SensorControllerImpl implements SensorsController {
 
-    private Map<String, SensorDevice> sensors = new HashMap<>();
+    private final Map<String, SensorDevice> sensors = new HashMap<>();
 
     private final PinsConfiguration pinsConfiguration;
 
     public SensorControllerImpl(PinsConfiguration pinsConfiguration) {
         this.pinsConfiguration = pinsConfiguration;
-        this.refresh();
     }
 
     @Override
+    @PostConstruct
     public void refresh() {
         sensors.clear();
         try {
@@ -45,29 +46,27 @@ public class SensorControllerImpl implements SensorsController {
                     sensorDevice.setUnits(storedSensor.getUnits());
                 }
             });
-        } catch (Throwable t) {
+            this.getValues();
+        } catch (IOException t) {
             log.warn("Problem with retrieving 1-wire devices");
         }
+    }
+
+    @Override
+    public void getValues() {
+        sensors.values().forEach(SensorDevice::retrieveValue);
     }
 
     @Override
     public List<SensorDTO> getSensors() {
         return this.sensors.entrySet()
                 .stream()
-                .map(sensorDeviceEntry -> {
-                    Double value = null;
-                    try {
-                        value = sensorDeviceEntry.getValue().getDeviceValue();
-                    } catch (IOException e) {
-                        log.warn("Can not read value for {}", sensorDeviceEntry.getKey());
-                    }
-                    return new SensorDTO(
-                            sensorDeviceEntry.getKey(),
-                            sensorDeviceEntry.getValue().getName(),
-                            value,
-                            sensorDeviceEntry.getValue().getUnits()
-                    );
-                })
+                .map(sensorDeviceEntry -> new SensorDTO(
+                        sensorDeviceEntry.getKey(),
+                        sensorDeviceEntry.getValue().getName(),
+                        sensorDeviceEntry.getValue().getValue(),
+                        sensorDeviceEntry.getValue().getUnits()
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -87,14 +86,8 @@ public class SensorControllerImpl implements SensorsController {
                 sensorDevice.setUnits(updateObject.getUnits());
             }
 
-            Double deviceValue;
-            try {
-                deviceValue = sensorDevice.getDeviceValue();
-            } catch (IOException e) {
-                deviceValue = null;
-            }
             pinsConfiguration.serializeSensors(this.sensors);
-            return new SensorDTO(address, sensorDevice.getName(), deviceValue, sensorDevice.getUnits());
+            return new SensorDTO(address, sensorDevice.getName(), sensorDevice.getValue(), sensorDevice.getUnits());
         } else {
             throw new NoSuchElementException("Address not found");
         }

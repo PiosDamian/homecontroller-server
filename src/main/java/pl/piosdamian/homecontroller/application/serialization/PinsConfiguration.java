@@ -12,8 +12,14 @@ import pl.piosdamian.homecontroller.application.configuration.GpioConfiguration;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.model.SwitcherDevice;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static pl.piosdamian.homecontroller.application.utils.Mapper.JSON_MAPPER;
@@ -43,43 +49,49 @@ public class PinsConfiguration {
                 })
                 .collect(Collectors.toList());
 
-        try (FileOutputStream fos = new FileOutputStream(new File(createPath(PINS_JSON)))) {
+        try (FileOutputStream fos = new FileOutputStream(new File(createConfigFilePath(PINS_JSON)))) {
             fos.write(JSON_MAPPER.writeValueAsBytes(collect));
         }
     }
 
     public List<SwitcherSerializationDTO> deserializePins() throws IOException {
-        final File pinsFile = new File(createPath(PINS_JSON));
-        if(pinsFile.exists()) {
-        try(final FileInputStream fis = new FileInputStream(pinsFile)) {
-            return JSON_MAPPER.readValue(fis, new TypeReference<List<SwitcherSerializationDTO>>() {});
-        } catch (IOException e) {
-            log.warn("Can not read pins configuration file");
-            throw e;
-        }
+        final File pinsFile = new File(createConfigFilePath(PINS_JSON));
+        if (pinsFile.exists()) {
+            try (final FileInputStream fis = new FileInputStream(pinsFile)) {
+                return JSON_MAPPER.readValue(fis, new TypeReference<>() {
+                });
+            } catch (IOException e) {
+                log.warn("Can not read pins configuration file");
+                throw e;
+            }
         } else {
             return Collections.emptyList();
         }
     }
 
     public void serializeSensors(Map<String, SensorDevice> sensorDeviceMap) throws IOException {
-        try(final FileOutputStream fos = new FileOutputStream(createPath(SENSORS_JSON))) {
+        try (final FileOutputStream fos = new FileOutputStream(createConfigFilePath(SENSORS_JSON))) {
             fos.write(JSON_MAPPER.writeValueAsBytes(sensorDeviceMap));
         }
     }
 
     public Map<String, SensorDevice> deserializeSensors() throws IOException {
-        final File sensorsFile = new File(createPath(SENSORS_JSON));
-        if(sensorsFile.exists()) {
-        try(final FileInputStream fis = new FileInputStream(sensorsFile)) {
-            return JSON_MAPPER.readValue(fis, new TypeReference<Map<String,SensorDevice>>(){});
-        }
+        final File sensorsFile = new File(createConfigFilePath(SENSORS_JSON));
+        if (sensorsFile.exists()) {
+            try (final FileInputStream fis = new FileInputStream(sensorsFile)) {
+                return JSON_MAPPER.readValue(fis, new TypeReference<>() {
+                });
+            }
         } else {
             return new HashMap<>();
         }
     }
 
-    private String createPath(String fileName) {
+    private String createConfigFilePath(String fileName) {
+        final File configRoot = new File(this.gpioConfiguration.getConfigDirectoryPath());
+        if (!configRoot.exists()) {
+            configRoot.mkdirs();
+        }
         return this.gpioConfiguration.getConfigDirectoryPath() + File.separator + fileName;
     }
 
