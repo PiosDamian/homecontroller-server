@@ -26,7 +26,7 @@ public class SensorDevice {
     private W1Device device;
 
 
-    private double factory = 0.001;
+    private double factor = 0.001;
 
     @Setter
     private String units = "";
@@ -57,12 +57,12 @@ public class SensorDevice {
     }
 
 
-    public void setFactory(double factory) {
-        this.factory = factory;
+    public void setFactor(double factor) {
+        this.factor = factor;
         this.setValue(this.value);
     }
 
     private void setValue(Double rawValue) {
-        this.value =  rawValue != null? rawValue * factory: Double.MIN_VALUE;
+        this.value = rawValue != null ? rawValue * factor : Double.MIN_VALUE;
     }
 }

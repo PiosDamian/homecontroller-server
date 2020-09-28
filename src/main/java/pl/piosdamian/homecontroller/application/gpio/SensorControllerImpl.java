@@ -4,10 +4,10 @@ import com.pi4j.io.w1.W1Master;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SensorDTO;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
-import pl.piosdamian.homecontroller.interfaces.rest.dto.request.SensorUpdateDTO;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.request.SensorUpdateDTO;
+import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SensorDTO;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class SensorControllerImpl implements SensorsController {
                 if(this.sensors.containsKey(name)) {
                     final SensorDevice sensorDevice = this.sensors.get(name);
                     sensorDevice.setName(storedSensor.getName());
-                    sensorDevice.setFactory(storedSensor.getFactory());
+                    sensorDevice.setFactor(storedSensor.getFactor());
                     sensorDevice.setUnits(storedSensor.getUnits());
                 }
             });
@@ -63,9 +63,7 @@ public class SensorControllerImpl implements SensorsController {
                 .stream()
                 .map(sensorDeviceEntry -> new SensorDTO(
                         sensorDeviceEntry.getKey(),
-                        sensorDeviceEntry.getValue().getName(),
-                        sensorDeviceEntry.getValue().getValue(),
-                        sensorDeviceEntry.getValue().getUnits()
+                        sensorDeviceEntry.getValue()
                 ))
                 .collect(Collectors.toList());
     }
@@ -80,14 +78,14 @@ public class SensorControllerImpl implements SensorsController {
                 sensorDevice.setName(updateObject.getName());
             }
 
-            Optional.ofNullable(updateObject.getFactor()).ifPresent(sensorDevice::setFactory);
+            Optional.ofNullable(updateObject.getFactor()).ifPresent(sensorDevice::setFactor);
 
             if (Objects.nonNull(updateObject.getUnits())) {
                 sensorDevice.setUnits(updateObject.getUnits());
             }
 
             pinsConfiguration.serializeSensors(this.sensors);
-            return new SensorDTO(address, sensorDevice.getName(), sensorDevice.getValue(), sensorDevice.getUnits());
+            return new SensorDTO(address, sensorDevice);
         } else {
             throw new NoSuchElementException("Address not found");
         }
