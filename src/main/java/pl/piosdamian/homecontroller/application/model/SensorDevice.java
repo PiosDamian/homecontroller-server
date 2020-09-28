@@ -59,7 +59,7 @@ public class SensorDevice {
 
     public void setFactor(double factor) {
         this.factor = factor;
-        this.setValue(this.value);
+        this.retrieveValue();
     }
 
     private void setValue(Double rawValue) {
