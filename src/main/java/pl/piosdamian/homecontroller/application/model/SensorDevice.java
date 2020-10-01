@@ -1,6 +1,5 @@
 package pl.piosdamian.homecontroller.application.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pi4j.io.w1.W1Device;
 import lombok.Data;
 import lombok.Getter;
@@ -15,36 +14,47 @@ import java.util.regex.Pattern;
 @Data
 @Slf4j
 public class SensorDevice {
-    @JsonIgnore
     private final static Pattern VALUE_PATTERN = Pattern.compile("(?<=t=)\\d+");
+    private final static Pattern STATE_PATTER = Pattern.compile("(?<=crd=)\\.+");
 
     @Setter
     private String name;
 
-    @JsonIgnore
-    @Setter
-    private W1Device device;
-
+    private final W1Device device;
 
     private double factor = 0.001;
+
+    private double equationConst = 0;
 
     @Setter
     private String units = "";
 
-    @JsonIgnore
     private Double value;
 
-    @JsonIgnore
+    public SensorDevice(final W1Device device) {
+        this.name = device.getName();
+        this.device = device;
+    }
+
     public void retrieveValue() {
-        final Matcher matcher;
+        final String rawValue;
         try {
-            matcher = VALUE_PATTERN.matcher(device.getValue());
-        } catch (NullPointerException e) {
-            log.warn("No device under name {}", this.name);
-            this.value = null;
-            return;
+            rawValue = device.getValue();
         } catch (IOException e) {
             log.warn("Problem with retrieving value {}, {}", this.name, e.getMessage());
+            this.value = null;
+            return;
+        }
+
+        if (wasAnyError(rawValue)) {
+            return;
+        }
+
+        final Matcher matcher;
+        try {
+            matcher = VALUE_PATTERN.matcher(rawValue);
+        } catch (NullPointerException e) {
+            log.warn("No device under name {}", this.name);
             this.value = null;
             return;
         }
@@ -62,7 +72,20 @@ public class SensorDevice {
         this.retrieveValue();
     }
 
+    public void setEquationConst(double equationConst) {
+        this.equationConst = equationConst;
+        this.retrieveValue();
+    }
+
+    private boolean wasAnyError(String value) {
+        final Matcher matcher = STATE_PATTER.matcher(value);
+        if (matcher.find()) {
+            return matcher.group().toUpperCase().equals("YES");
+        }
+        return false;
+    }
+
     private void setValue(Double rawValue) {
-        this.value = rawValue != null ? rawValue * factor : Double.MIN_VALUE;
+        this.value = rawValue != null ? rawValue * factor + equationConst : Double.MIN_VALUE;
     }
 }

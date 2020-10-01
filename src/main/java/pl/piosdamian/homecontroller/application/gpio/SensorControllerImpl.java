@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
-import pl.piosdamian.homecontroller.interfaces.rest.dto.request.SensorUpdateDTO;
 import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SensorDTO;
 
 import javax.annotation.PostConstruct;
@@ -33,22 +32,21 @@ public class SensorControllerImpl implements SensorsController {
         try {
             final W1Master w1Master = new W1Master();
             w1Master.getDevices().forEach(w1Device -> {
-                final SensorDevice sensorDevice = new SensorDevice();
-                sensorDevice.setName(w1Device.getName());
-                sensorDevice.setDevice(w1Device);
+                final SensorDevice sensorDevice = new SensorDevice(w1Device);
                 sensors.put(w1Device.getName(), sensorDevice);
             });
             pinsConfiguration.deserializeSensors().forEach((name, storedSensor) -> {
-                if(this.sensors.containsKey(name)) {
+                if (this.sensors.containsKey(name)) {
                     final SensorDevice sensorDevice = this.sensors.get(name);
                     sensorDevice.setName(storedSensor.getName());
                     sensorDevice.setFactor(storedSensor.getFactor());
                     sensorDevice.setUnits(storedSensor.getUnits());
+                    sensorDevice.setEquationConst(storedSensor.getEquationConst());
                 }
             });
             this.getValues();
-        } catch (IOException t) {
-            log.warn("Problem with retrieving 1-wire devices");
+        } catch (IOException e) {
+            log.warn("Problem with retrieving 1-wire devices, {}", e.getMessage());
         }
     }
 
@@ -69,7 +67,7 @@ public class SensorControllerImpl implements SensorsController {
     }
 
     @Override
-    public SensorDTO updateSensor(String address, SensorUpdateDTO updateObject) throws IOException {
+    public SensorDTO updateSensor(String address, SensorDTO updateObject) throws IOException {
         final Optional<SensorDevice> optionalSensorDevice = Optional.ofNullable(this.sensors.get(address));
         if (optionalSensorDevice.isPresent()) {
             final SensorDevice sensorDevice = optionalSensorDevice.get();
@@ -79,8 +77,9 @@ public class SensorControllerImpl implements SensorsController {
             }
 
             Optional.ofNullable(updateObject.getFactor()).ifPresent(sensorDevice::setFactor);
+            Optional.ofNullable(updateObject.getEquationConst()).ifPresent(sensorDevice::setEquationConst);
 
-            if (Objects.nonNull(updateObject.getUnits())) {
+            if (StringUtils.isNotBlank(updateObject.getUnits())) {
                 sensorDevice.setUnits(updateObject.getUnits());
             }
 

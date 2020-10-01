@@ -3,9 +3,11 @@ package pl.piosdamian.homecontroller.interfaces.rest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import pl.piosdamian.homecontroller.application.gpio.SensorsController;
-import pl.piosdamian.homecontroller.interfaces.rest.dto.request.SensorUpdateDTO;
 import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SensorDTO;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class SensorRestController {
     }
 
     @PutMapping("/sensor/{address}")
-    public ResponseEntity<Object> updateSensor(@RequestBody final SensorUpdateDTO sensorUpdateDTO) {
+    public ResponseEntity<Object> updateSensor(@RequestBody final SensorDTO sensorUpdateDTO) {
         try {
             return ResponseEntity.ok(sensorsController.updateSensor(sensorUpdateDTO.getAddress(), sensorUpdateDTO));
         } catch (NoSuchElementException e) {

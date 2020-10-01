@@ -69,13 +69,16 @@ public class PinsConfiguration {
         }
     }
 
-    public void serializeSensors(Map<String, SensorDevice> sensorDeviceMap) throws IOException {
+    public void serializeSensors(final Map<String, SensorDevice> sensorDeviceMap) throws IOException {
+        final HashMap<String, SensorSerializationDTO> serializationMap = new HashMap<>();
+        sensorDeviceMap.forEach((key, value) -> serializationMap.put(key, new SensorSerializationDTO(value)));
+
         try (final FileOutputStream fos = new FileOutputStream(createConfigFilePath(SENSORS_JSON))) {
-            fos.write(JSON_MAPPER.writeValueAsBytes(sensorDeviceMap));
+            fos.write(JSON_MAPPER.writeValueAsBytes(serializationMap));
         }
     }
 
-    public Map<String, SensorDevice> deserializeSensors() throws IOException {
+    public Map<String, SensorSerializationDTO> deserializeSensors() throws IOException {
         final File sensorsFile = new File(createConfigFilePath(SENSORS_JSON));
         if (sensorsFile.exists()) {
             try (final FileInputStream fis = new FileInputStream(sensorsFile)) {
@@ -102,5 +105,22 @@ public class PinsConfiguration {
         private Integer address;
         private String name;
         private Integer listenerAddress;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SensorSerializationDTO {
+        private String name;
+        private Double factor;
+        private Double equationConst;
+        private String units;
+
+        public SensorSerializationDTO(final SensorDevice device) {
+            this.name = device.getName();
+            this.factor = device.getFactor();
+            this.equationConst = device.getEquationConst();
+            this.units = device.getUnits();
+        }
     }
 }
