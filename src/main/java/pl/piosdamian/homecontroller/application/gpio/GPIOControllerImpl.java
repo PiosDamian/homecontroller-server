@@ -98,7 +98,7 @@ public class GPIOControllerImpl implements GPIOController {
 		return this.switcherDevices
 				.entrySet()
 				.stream()
-				.map(entry -> new SwitcherDTO(entry.getKey(), entry.getValue().getName(), entry.getValue().getState()))
+				.map(entry -> new SwitcherDTO(entry.getKey(), entry.getValue()))
 				.collect(Collectors.toList());
 	}
 

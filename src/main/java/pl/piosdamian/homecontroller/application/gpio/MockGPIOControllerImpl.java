@@ -7,7 +7,10 @@ import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
 import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherState;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Profile("!rasp")
@@ -19,7 +22,7 @@ public class MockGPIOControllerImpl implements GPIOController {
     @Override
     public void registerSwitcher(int pinAddress, String name, boolean force) throws IOException {
         log.info("Creating new switcher, address: {}, name: {}", pinAddress, name);
-        this.switchers.put(pinAddress, new SwitcherDTO(pinAddress, name, SwitcherState.UNKNOWN));
+        this.switchers.put(pinAddress, new SwitcherDTO(pinAddress, name, SwitcherState.UNKNOWN, 1));
     }
 
     @Override
