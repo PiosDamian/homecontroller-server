@@ -16,10 +16,7 @@ import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
 import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherState;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +27,7 @@ public class GPIOControllerImpl implements GPIOController {
 	private final GpioConfiguration gpioConfiguration;
 	private final PinsConfiguration pinsConfiguration;
 	private final Broadcaster broadcaster;
+	private final Set<Integer> reservedPins = new HashSet<>();
 
 	private final Map<Integer, SwitcherDevice> switcherDevices = new HashMap<>();
 
@@ -68,6 +66,7 @@ public class GPIOControllerImpl implements GPIOController {
 		this.gpio.unprovisionPin(switcherDevice.getBlinker());
 		removeListeners(switcherDevice);
 		pinsConfiguration.serializePins(this.switcherDevices);
+		this.reservedPins.remove(pinAddress);
 	}
 
 	@Override
@@ -102,6 +101,11 @@ public class GPIOControllerImpl implements GPIOController {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public Set<Integer> getReservedPins() {
+		return this.reservedPins;
+	}
+
 	private SwitcherDevice createSwitcherDevice(int pinAddress, String name, boolean force) {
 		if (switcherDevices.containsKey(pinAddress) && !force) {
 			throw new GpioControllerException("Pin already in use");
@@ -115,6 +119,9 @@ public class GPIOControllerImpl implements GPIOController {
 		switcherDevice.setBlinker(createOutputPin(pinAddress, name));
 		switcherDevice.setName(name);
 		switcherDevices.put(pinAddress, switcherDevice);
+
+		this.reservedPins.add(pinAddress);
+
 		return switcherDevice;
 	}
 
@@ -132,12 +139,14 @@ public class GPIOControllerImpl implements GPIOController {
 					new StateChangeDTO(device.getBlinker().getPin().getAddress(), device.getState());
 			broadcaster.next(new PushMessage("stateUpdate", stateChangeDTO));
 		});
+		this.reservedPins.add(input.getPin().getAddress());
 	}
 
 	private void removeListeners(SwitcherDevice switcherDevice) {
 		Optional.ofNullable(switcherDevice.getListener()).ifPresent(pin -> {
 			pin.removeAllListeners();
 			this.gpio.unprovisionPin(pin);
+			this.reservedPins.remove(pin.getPin().getAddress());
 		});
 	}
 

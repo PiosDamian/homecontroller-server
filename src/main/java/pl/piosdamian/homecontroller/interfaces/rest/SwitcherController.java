@@ -11,6 +11,7 @@ import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +29,11 @@ public class SwitcherController {
     @GetMapping("/switchers")
     public ResponseEntity<Collection<SwitcherDTO>> getSwitchers() {
         return ResponseEntity.ok(gpioController.getSwitchers());
+    }
+
+    @GetMapping("/reservedPins")
+    public ResponseEntity<Set<Integer>> getReservedPins() {
+        return ResponseEntity.ok(this.gpioController.getReservedPins());
     }
 
     @PostMapping("/switcher/add")

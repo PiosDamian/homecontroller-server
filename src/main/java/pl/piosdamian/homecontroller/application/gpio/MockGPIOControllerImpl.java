@@ -7,10 +7,7 @@ import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherDTO;
 import pl.piosdamian.homecontroller.interfaces.rest.dto.response.SwitcherState;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Profile("!rasp")
@@ -56,5 +53,10 @@ public class MockGPIOControllerImpl implements GPIOController {
     @Override
     public Collection<SwitcherDTO> getSwitchers() {
         return new ArrayList<>(this.switchers.values());
+    }
+
+    @Override
+    public Set<Integer> getReservedPins() {
+        return this.switchers.keySet();
     }
 }
