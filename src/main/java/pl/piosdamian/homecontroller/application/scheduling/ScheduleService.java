@@ -24,10 +24,10 @@ public class ScheduleService {
     }
 
 
-    public void registerTask(final TaskDefinition  taskDefinition) {
+    public void registerTask(final TaskDefinition taskDefinition) {
         final TaskDefinitionBean taskDefinitionBean = this.beansFactory.createTaskDefinitionBean(taskDefinition);
 
-        this.schedulingService.scheduleTask(taskDefinition.getName(), taskDefinitionBean, taskDefinition.getCronExpression());
+        this.schedulingService.scheduleCronTask(taskDefinition.getName(), taskDefinitionBean, taskDefinitionBean.getTrigger());
 
         this.tasksRepository.storeTask(taskDefinition);
     }

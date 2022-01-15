@@ -7,11 +7,16 @@ import java.util.Map;
 @Data
 public class TaskDefinition {
     private final String name;
-    private final String cronExpression;
+    private final ControlType controlType;
+    private final String expression;
     private final Type actionType;
     private final Map<String, String> data;
 
     public enum Type {
         SWITCH, READ_VALUE
+    }
+
+    public enum ControlType {
+        CRON, PERIOD
     }
 }
