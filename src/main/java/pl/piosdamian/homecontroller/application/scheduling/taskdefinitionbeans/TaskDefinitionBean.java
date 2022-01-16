@@ -35,8 +35,10 @@ public class TaskDefinitionBean implements Runnable {
                 this.trigger = new CronTrigger(taskDefinition.getExpression());
                 break;
             case PERIOD:
-                final PeriodicTrigger periodicTrigger = new PeriodicTrigger(Long.parseLong(taskDefinition.getExpression()));
+                final long period = Long.parseLong(taskDefinition.getExpression());
+                final PeriodicTrigger periodicTrigger = new PeriodicTrigger(period);
                 periodicTrigger.setFixedRate(true);
+                periodicTrigger.setInitialDelay(period);
                 this.trigger = periodicTrigger;
                 break;
             default:

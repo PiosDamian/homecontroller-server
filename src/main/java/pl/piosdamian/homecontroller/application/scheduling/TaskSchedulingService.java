@@ -18,6 +18,9 @@ public class TaskSchedulingService {
     private final Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
 
     public void scheduleCronTask(final String jobId, final Runnable tasklet, final Trigger trigger) {
+        if(this.jobsMap.containsKey(jobId)) {
+            this.removeScheduledTask(jobId);
+        }
         jobsMap.put(jobId, taskScheduler.schedule(tasklet, trigger));
     }
 
