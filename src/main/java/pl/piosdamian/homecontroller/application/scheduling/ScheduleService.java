@@ -4,8 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.scheduling.dto.TaskDefinition;
 import pl.piosdamian.homecontroller.application.scheduling.storing.ScheduledTasksRepository;
-import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionBean;
-import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionBeansFactory;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionRunner;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionRunnerFactory;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.pifactory.PiTaskDefinitionRunnerFactory;
 
 import java.util.Collection;
 
@@ -15,9 +16,9 @@ public class ScheduleService {
 
     private final ScheduledTasksRepository tasksRepository;
     private final TaskSchedulingService schedulingService;
-    private final TaskDefinitionBeansFactory beansFactory;
+    private final TaskDefinitionRunnerFactory beansFactory;
 
-    public ScheduleService(ScheduledTasksRepository tasksRepository, TaskSchedulingService schedulingService, TaskDefinitionBeansFactory beansFactory) {
+    public ScheduleService(final ScheduledTasksRepository tasksRepository, final TaskSchedulingService schedulingService, final PiTaskDefinitionRunnerFactory beansFactory) {
         this.tasksRepository = tasksRepository;
         this.schedulingService = schedulingService;
         this.beansFactory = beansFactory;
@@ -27,11 +28,11 @@ public class ScheduleService {
 
 
     public void registerTask(final TaskDefinition taskDefinition) {
-        final TaskDefinitionBean taskDefinitionBean = this.beansFactory.createTaskDefinitionBean(taskDefinition);
-        this.schedulingService.scheduleCronTask(taskDefinition.getName(), taskDefinitionBean, taskDefinitionBean.getTrigger());
+        final TaskDefinitionRunner taskDefinitionRunner = this.beansFactory.createTaskDefinitionRunner(taskDefinition);
+        this.schedulingService.scheduleCronTask(taskDefinitionRunner);
 
         this.tasksRepository.storeTask(taskDefinition);
-        log.info("Created task with name: {}, triggered by {}", taskDefinition.getName(), taskDefinitionBean.getTrigger().getClass().getName());
+        log.info("Created task with name: {}, triggered by {}", taskDefinition.getName(), taskDefinitionRunner.getTrigger().getClass().getName());
     }
 
     public Collection<TaskDefinition> getTasksList() {

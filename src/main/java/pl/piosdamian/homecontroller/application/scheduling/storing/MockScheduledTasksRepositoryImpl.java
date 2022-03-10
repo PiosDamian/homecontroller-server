@@ -1,26 +1,22 @@
 package pl.piosdamian.homecontroller.application.scheduling.storing;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.scheduling.dto.TaskDefinition;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class MockScheduledTasksRepositoryImpl implements ScheduledTasksRepository {
-    private final Map<String, TaskDefinition> tasks = new HashMap<>();
-
+@Profile("!rasp")
+public class MockScheduledTasksRepositoryImpl extends AbstractScheduleTasksRepository {
     @Override
-    public void storeTask(final TaskDefinition taskDefinition) {
-        this.tasks.put(taskDefinition.getName(), taskDefinition);
+    protected void storeSchedulers() {
     }
 
     @Override
-    public Collection<TaskDefinition> listStoredTasks() {
-        return new ArrayList<>(this.tasks.values());
-    }
-
-    @Override
-    public void removeTask(final String name) {
-        this.tasks.remove(name);
+    protected Map<String, TaskDefinition> readConfiguration() throws IOException {
+        return new HashMap<>();
     }
 }

@@ -3,6 +3,7 @@ package pl.piosdamian.homecontroller.application.gpio;
 import com.pi4j.io.w1.W1Master;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import pl.piosdamian.homecontroller.application.model.SensorDevice;
 import pl.piosdamian.homecontroller.application.serialization.PinsConfiguration;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Profile("rasp")
 public class SensorControllerImpl implements SensorsController {
 
     private final Map<String, SensorDevice> sensors = new HashMap<>();

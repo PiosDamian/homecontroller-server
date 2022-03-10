@@ -12,7 +12,7 @@ import pl.piosdamian.homecontroller.application.gpio.SensorsController;
 public class SensorValueUpdaterScheduler {
     private final SensorsController sensorsController;
 
-    public SensorValueUpdaterScheduler(SensorsController sensorsController) {
+    public SensorValueUpdaterScheduler(final SensorsController sensorsController) {
         this.sensorsController = sensorsController;
     }
 

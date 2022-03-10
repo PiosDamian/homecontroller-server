@@ -80,7 +80,7 @@ public class SensorDevice {
     private boolean wasAnyError(String value) {
         final Matcher matcher = STATE_PATTER.matcher(value);
         if (matcher.find()) {
-            return matcher.group().toUpperCase().equals("YES");
+            return matcher.group().equalsIgnoreCase("YES");
         }
         return false;
     }

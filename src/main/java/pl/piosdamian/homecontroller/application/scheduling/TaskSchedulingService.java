@@ -2,8 +2,8 @@ package pl.piosdamian.homecontroller.application.scheduling;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.Trigger;
 import org.springframework.stereotype.Service;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionRunner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,15 +17,16 @@ public class TaskSchedulingService {
 
     private final Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
 
-    public void scheduleCronTask(final String jobId, final Runnable tasklet, final Trigger trigger) {
-        if(this.jobsMap.containsKey(jobId)) {
+    public void scheduleCronTask(final TaskDefinitionRunner taskDefinitionRunner) {
+        final String jobId = taskDefinitionRunner.getTaskDefinition().getName();
+        if (this.jobsMap.containsKey(jobId)) {
             this.removeScheduledTask(jobId);
         }
-        jobsMap.put(jobId, taskScheduler.schedule(tasklet, trigger));
+        jobsMap.put(jobId, taskScheduler.schedule(taskDefinitionRunner, taskDefinitionRunner.getTrigger()));
     }
 
     public void removeScheduledTask(final String jobId) {
-        ScheduledFuture<?> scheduledTask = jobsMap.get(jobId);
+        final ScheduledFuture<?> scheduledTask = jobsMap.get(jobId);
         if (scheduledTask != null) {
             scheduledTask.cancel(false);
             jobsMap.remove(jobId);
