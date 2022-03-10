@@ -7,16 +7,12 @@ import java.util.Map;
 @Data
 public class TaskDefinition {
     private final String name;
-    private final ControlType controlType;
+    private final ScheduleType scheduleType;
     private final String expression;
-    private final Type actionType;
+    private final String actionType;
     private final Map<String, String> data;
 
-    public enum Type {
-        SWITCH, READ_VALUE
-    }
-
-    public enum ControlType {
+    public enum ScheduleType {
         CRON, PERIOD
     }
 }

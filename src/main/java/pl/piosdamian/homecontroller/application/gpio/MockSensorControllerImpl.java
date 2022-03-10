@@ -57,7 +57,6 @@ public class MockSensorControllerImpl implements SensorsController {
         @Override
         public void setValue(Double value) {
             super.setValue(value * this.getFactor() + this.getEquationConst());
-            log.info("{} * {} + {} = {}", value, this.getFactor(), this.getEquationConst(), this.getValue());
         }
     }
 }

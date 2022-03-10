@@ -13,7 +13,7 @@ public class TriggerFactoryImpl implements TriggerFactory {
 
     @Override
     public Trigger createTrigger(TaskDefinition taskDefinition) {
-        switch (taskDefinition.getControlType()) {
+        switch (taskDefinition.getScheduleType()) {
             case CRON:
                 return new CronTrigger(taskDefinition.getExpression());
             case PERIOD:

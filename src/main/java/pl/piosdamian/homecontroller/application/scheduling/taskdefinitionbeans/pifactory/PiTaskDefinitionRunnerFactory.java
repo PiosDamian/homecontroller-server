@@ -17,9 +17,9 @@ public class PiTaskDefinitionRunnerFactory implements TaskDefinitionRunnerFactor
     private final TriggerFactory triggerFactory;
 
     public TaskDefinitionRunner createTaskDefinitionRunner(final TaskDefinition taskDefinition) {
-        if (taskDefinition.getActionType().equals(TaskDefinition.Type.READ_VALUE)) {
+        if (taskDefinition.getActionType().equals("READ_VALUE")) {
             return new SensorTaskDefinitionRunner(this.sensorsController, taskDefinition, this.triggerFactory.createTrigger(taskDefinition));
-        } else if (taskDefinition.getActionType().equals(TaskDefinition.Type.SWITCH)) {
+        } else if (taskDefinition.getActionType().equals("SWITCH")) {
             return new SwitcherTaskDefinitionRunner(this.gpioController, taskDefinition, this.triggerFactory.createTrigger(taskDefinition));
         } else {
             throw new IllegalStateException("Unsupported task definition action type: " + taskDefinition.getActionType());
