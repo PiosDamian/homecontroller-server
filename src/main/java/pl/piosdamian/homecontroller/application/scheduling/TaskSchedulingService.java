@@ -3,7 +3,7 @@ package pl.piosdamian.homecontroller.application.scheduling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionRunner;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionrunner.TaskDefinitionRunner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class TaskSchedulingService {
 
     private final Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
 
-    public void scheduleCronTask(final TaskDefinitionRunner taskDefinitionRunner) {
+    public void scheduleTask(final TaskDefinitionRunner taskDefinitionRunner) {
         final String jobId = taskDefinitionRunner.getTaskDefinition().getName();
         if (this.jobsMap.containsKey(jobId)) {
             this.removeScheduledTask(jobId);

@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.pifactory;
+package pl.piosdamian.homecontroller.application.scheduling.taskdefinitionrunner.pifactory;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.Trigger;
 import pl.piosdamian.homecontroller.application.gpio.SensorsController;
 import pl.piosdamian.homecontroller.application.scheduling.dto.TaskDefinition;
-import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans.TaskDefinitionRunner;
+import pl.piosdamian.homecontroller.application.scheduling.taskdefinitionrunner.TaskDefinitionRunner;
 
 @Slf4j
 class SensorTaskDefinitionRunner implements TaskDefinitionRunner {

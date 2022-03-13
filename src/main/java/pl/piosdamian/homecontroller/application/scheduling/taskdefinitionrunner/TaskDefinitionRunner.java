@@ -1,4 +1,4 @@
-package pl.piosdamian.homecontroller.application.scheduling.taskdefinitionbeans;
+package pl.piosdamian.homecontroller.application.scheduling.taskdefinitionrunner;
 
 import org.springframework.scheduling.Trigger;
 import pl.piosdamian.homecontroller.application.scheduling.dto.TaskDefinition;
